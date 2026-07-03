@@ -43,6 +43,20 @@ Add any overrides to your `inventories/[your_inventory]/group_vars/homelab.yml` 
 
 The TeamSpeak container runs as its built-in user (UID `9987`) and does not support overriding the user via PUID/PGID. Forcing a custom `user:` breaks the server's access to its own `/files` and `/logs` directories ([upstream issue](https://github.com/TeamSpeak-Systems/teamspeak-linux-docker-images/issues/51)), so the role intentionally does not set one. As a result, files created in the mounted `teamspeak3_data_directory` are owned by UID `9987` on the host.
 
+### ServerQuery IP allow/block lists
+
+The ServerQuery interface is rate-limited by flood protection, which can interfere with tools that
+poll it frequently (for example a web viewer). Add their IPs to `teamspeak3_ip_whitelist` to exempt
+them from flood protection; use `teamspeak3_ip_blacklist` to bar IPs from ServerQuery entirely.
+Both are comma separated and rendered into the `query_ip_allowlist.txt` / `query_ip_blocklist.txt`
+files the server reads. Localhost is included in the allowlist by default — keep it so local
+queries (such as [Telegraf](../telegraf/)) keep working.
+
+```yaml title="inventories/homelab/group_vars/homelab.yml"
+# e.g. exempt a containerized viewer reaching TeamSpeak from the Docker bridge
+teamspeak3_ip_whitelist: "127.0.0.1,::1,172.17.0.0/16"
+```
+
 ### TeamSpeak License
 
 A TeamSpeak server requires a license file when using more then 1 virtual server with 32 slots.
