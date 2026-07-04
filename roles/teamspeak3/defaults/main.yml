@@ -6,11 +6,13 @@ teamspeak3_available_externally: false
 # directories
 teamspeak3_data_directory: "{{ docker_home }}/teamspeak3/"
 
-# Comma separated IPs exempt from ServerQuery flood protection. Localhost is included by default so
-# local queries (e.g. telegraf) keep working; override the whole list to add or change entries.
-teamspeak3_ip_whitelist: "127.0.0.1,::1"
-teamspeak3_ip_blacklist: "" # Comma separated IPs to bar from ServerQuery entirely
+teamspeak3_ip_whitelist: "127.0.0.1,::1" # Comma separated list of IPs that are exempt from ServerQuery flood protection
+teamspeak3_ip_blacklist: "" # Comma separated list of IPs that are blocked from ServerQuery entirely
 teamspeak3_query_protocols: "raw,ssh" # Comma separated list of query protocols to enable, options are raw and ssh
+
+# Not supported by contianer https://github.com/TeamSpeak-Systems/teamspeak-linux-docker-images/issues/51
+# teamspeak3_user_id: "1000"
+# teamspeak3_group_id: "1000"
 
 # network
 teamspeak3_hostname: teamspeak3
