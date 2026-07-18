@@ -14,6 +14,14 @@ n8n_port: 5678
 n8n_basic_auth_user: n8n_user
 n8n_basic_auth_password: n8n_change_me
 
+# Proxy / community packages
+# n8n sits behind Traefik, so Express's trust-proxy setting needs a hop count of 1
+# for X-Forwarded-For handling (rate-limiter validation) to work correctly.
+n8n_proxy_hops: 1
+# Community packages run arbitrary, unvetted code inside the n8n container.
+# Set to false if that risk isn't acceptable for your instance.
+n8n_community_packages_enabled: true
+
 # containers
 n8n_container_name: n8n
 n8n_image_name: docker.n8n.io/n8nio/n8n

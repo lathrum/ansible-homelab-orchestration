@@ -34,6 +34,8 @@
           N8N_BASIC_AUTH_USER: "{{ n8n_basic_auth_user }}"
           N8N_BASIC_AUTH_PASSWORD: "{{ n8n_basic_auth_password }}"
           WEBHOOK_URL: "https://{{ n8n_hostname }}.{{ dns_domain }}"
+          N8N_PROXY_HOPS: "{{ n8n_proxy_hops | string }}"
+          N8N_COMMUNITY_PACKAGES_ENABLED: "{{ n8n_community_packages_enabled | string | lower }}"
         labels:
           traefik.enable: "{{ (n8n_dns_accessible or n8n_available_externally) | string }}"
           traefik.http.services.n8n.loadbalancer.server.port: "5678"
