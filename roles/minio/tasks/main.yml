@@ -16,6 +16,9 @@
         - "{{ minio_data_directory }}/data"
 
     - name: Minio Docker Container
+      # Passes secret env (MINIO_ROOT_PASSWORD); no_log keeps it out of the
+      # target host journal on rebuild.
+      no_log: true
       community.docker.docker_container:
         name: "{{ minio_container_name }}"
         image: "{{ minio_image_name }}:{{ minio_image_version }}"
