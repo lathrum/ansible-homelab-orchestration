@@ -49,6 +49,9 @@
         env:
           GF_PLUGINS_ENABLE_ALPHA: "true"
           GF_UNIFIED_ALERTING_ENABLED: "true"
+          GF_ANALYTICS_REPORTING_ENABLED: "false"
+          GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+          GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
         restart_policy: unless-stopped
         memory: "{{ grafana_memory }}"
         labels:
