@@ -1,0 +1,39 @@
+---
+alertmanager_enabled: false
+alertmanager_dns_accessible: "{{ traefik_enable_dns_for_all }}"
+alertmanager_available_externally: false
+
+# directories
+alertmanager_data_directory: "{{ docker_home }}/alertmanager/data"
+alertmanager_config_directory: "{{ docker_home }}/alertmanager/config"
+
+# network
+alertmanager_hostname: alertmanager
+alertmanager_port: 9093
+
+# uid/gid
+alertmanager_user_id: 1000
+alertmanager_group_id: 1000
+
+# containers
+alertmanager_container_name: alertmanager
+alertmanager_image_name: prom/alertmanager
+alertmanager_image_version: latest
+
+alertmanager_container_names: # Used to check if app is running
+  - "{{ alertmanager_container_name }}"
+
+# specs
+alertmanager_memory: 256m
+
+# config
+# The full Alertmanager configuration (https://prometheus.io/docs/alerting/latest/configuration/)
+# as a dict, rendered to alertmanager.yml. The default routes everything to a receiver that
+# does nothing — override this in your group_vars with your real routing tree and receivers
+# (email, webhooks, etc.). Point Prometheus at this instance with
+# `prometheus_alertmanager_targets` (see roles/prometheus/defaults/main.yml).
+alertmanager_config:
+  route:
+    receiver: "default"
+  receivers:
+    - name: "default"

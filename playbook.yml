@@ -30,6 +30,10 @@
       tags: airsonic_advanced
       when: airsonic_advanced_enabled or (airsonic_advanced_container_names | intersect(running_containers) | length > 0)
 
+    - role: alertmanager
+      tags: alertmanager
+      when: alertmanager_enabled or (alertmanager_container_names | intersect(running_containers) | length > 0)
+
     - role: alloy
       tags: alloy
       when: alloy_enabled or (alloy_container_names | intersect(running_containers) | length > 0)

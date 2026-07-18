@@ -30,6 +30,17 @@ prometheus_memory: 1g
 prometheus_retention_time: 365d
 prometheus_retention_size: 30GB
 prometheus_collection_interval: 15s
+
+# alerting
+# When enabled, Prometheus loads alert rules from prometheus_rules_directory (mounted at
+# /etc/prometheus/rules). Drop *.yml rule files there and reload with
+# `docker kill -s HUP prometheus`. Pair with the alertmanager role (see
+# roles/alertmanager/defaults/main.yml) to route the resulting alerts.
+prometheus_alerting_enabled: false
+prometheus_rules_directory: "{{ docker_home }}/prometheus/rules"
+# uncomment to send alerts to one or more Alertmanager instances
+# prometheus_alertmanager_targets:
+#   - 192.168.1.1:9093
 # uncomment to scrape more hosts
 # prometheus_additional_hosts:
 #  - 192.168.1.1:9100

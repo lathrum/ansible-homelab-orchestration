@@ -1,0 +1,62 @@
+---
+title: Alertmanager
+tags: ["Monitoring"]
+---
+
+import { Aside } from "@astrojs/starlight/components"
+import Tags from "../../../components/Tags.astro"
+import RecentChanges from "../../../components/RecentChanges.astro"
+
+[Repository](https://github.com/prometheus/alertmanager)
+
+<Tags tags={frontmatter.tags} />
+
+<Aside>
+	This application is part of the [Monitoring Applications](../../application_combos/monitoring) combo.
+  On it's own, it won't do anything — it needs [Prometheus](../prometheus) evaluating alert rules and sending them here.
+</Aside>
+
+Alertmanager handles alerts sent by Prometheus: deduplicating, grouping, and routing them to receivers (email, webhooks, chat integrations), with silences for acknowledging known issues.
+
+## Setting up
+
+```yaml title="inventories/homelab/group_vars/homelab.yml"
+alertmanager_enabled: true
+```
+
+Then point Prometheus at it and enable rule evaluation:
+
+```yaml title="inventories/homelab/group_vars/homelab.yml"
+prometheus_alerting_enabled: true
+prometheus_alertmanager_targets:
+  - "[your_server_ip]:9093"
+```
+
+Prometheus will load any `*.yml` alert-rule files placed in `prometheus_rules_directory`
+(default `{{ docker_home }}/prometheus/rules`); reload it with `docker kill -s HUP prometheus`
+after adding rules.
+
+By default, Alertmanager can be accessed at `http://[your_server_ip]:9093` or `https://alertmanager.[your_domain].com` if you have [DNS access](../../guides/dns-access/) configured. The web UI lists firing alerts and lets you create silences (acknowledge an alert for a set time; it re-fires when the silence expires).
+
+## Configuration
+
+The entire Alertmanager configuration (routing tree, receivers, inhibition rules) is provided as a dict via the `alertmanager_config` variable, rendered directly to `alertmanager.yml`. The default config routes everything to a receiver that does nothing, so you'll want to override it, for example:
+
+```yaml title="inventories/homelab/group_vars/homelab.yml"
+alertmanager_config:
+  route:
+    receiver: "email"
+    group_by: ["alertname", "device"]
+    repeat_interval: 24h
+  receivers:
+    - name: "email"
+      webhook_configs:
+        - url: "http://example.internal:9095/email"
+```
+
+See the default configuration options at [`roles/alertmanager/defaults/main.yml`](https://github.com/Dylancyclone/ansible-homelab-orchestration/blob/main/roles/alertmanager/defaults/main.yml).
+Add any overrides to your `inventories/[your_inventory]/group_vars/homelab.yml` file.
+
+## Recent Changes
+
+<RecentChanges application="alertmanager" />

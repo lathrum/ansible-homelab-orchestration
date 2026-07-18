@@ -1,0 +1,56 @@
+---
+- name: Start Alertmanager
+  when: alertmanager_enabled
+  block:
+    - name: Check for Alertmanager Breaking Changes
+      ansible.builtin.include_role:
+        name: breaking_changes
+      vars:
+        breaking_changes_application: alertmanager
+
+    - name: Create Alertmanager Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ alertmanager_data_directory }}"
+        - "{{ alertmanager_config_directory }}"
+
+    - name: Template Alertmanager config
+      ansible.builtin.template:
+        src: alertmanager.yml.j2
+        dest: "{{ alertmanager_config_directory }}/alertmanager.yml"
+      register: alertmanager_config_file
+
+    - name: Alertmanager Docker Container
+      community.docker.docker_container:
+        name: "{{ alertmanager_container_name }}"
+        image: "{{ alertmanager_image_name }}:{{ alertmanager_image_version }}"
+        pull: true
+        user: "{{ alertmanager_user_id }}:{{ alertmanager_group_id }}"
+        volumes:
+          - "{{ alertmanager_config_directory }}/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro"
+          - "{{ alertmanager_data_directory }}:/alertmanager:rw"
+          - "/etc/timezone:/etc/timezone:ro"
+        ports:
+          - "{{ alertmanager_port }}:9093"
+        restart_policy: unless-stopped
+        restart: "{{ alertmanager_config_file is changed }}"
+        command: "--config.file=/etc/alertmanager/alertmanager.yml --storage.path=/alertmanager"
+        memory: "{{ alertmanager_memory }}"
+        labels:
+          traefik.enable: "{{ (alertmanager_dns_accessible or alertmanager_available_externally) | string }}"
+          traefik.http.services.alertmanager.loadbalancer.server.port: "9093"
+          traefik.http.routers.alertmanager.rule: "Host(`{{ alertmanager_hostname ~ '.' if alertmanager_hostname else ''}}{{ dns_domain }}`)"
+          traefik.http.routers.alertmanager.tls.domains[0].main: "{{ dns_domain }}"
+          traefik.http.routers.alertmanager.tls.domains[0].sans: "*.{{ dns_domain }}"
+          traefik.http.routers.alertmanager.tls.certresolver: "letsencrypt"
+          traefik.http.routers.alertmanager.middlewares: "{{ omit if alertmanager_available_externally else 'blockExternal@file' }}"
+
+- name: Stop Alertmanager
+  when: not alertmanager_enabled
+  block:
+    - name: Stop Alertmanager
+      community.docker.docker_container:
+        name: "{{ alertmanager_container_name }}"
+        state: absent

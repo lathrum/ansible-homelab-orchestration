@@ -12,9 +12,8 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
-      with_items:
-        - "{{ prometheus_data_directory }}"
-        - "{{ prometheus_config_directory }}"
+      with_items: "{{ [prometheus_data_directory, prometheus_config_directory]
+        + ([prometheus_rules_directory] if prometheus_alerting_enabled else []) }}"
 
     - name: Template Prometheus config
       ansible.builtin.template:
@@ -28,10 +27,10 @@
         image: "{{ prometheus_image_name }}:{{ prometheus_image_version }}"
         pull: true
         user: "{{ prometheus_user_id }}:{{ prometheus_group_id }}"
-        volumes:
-          - "{{ prometheus_config_directory }}/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
-          - "{{ prometheus_data_directory }}:/prometheus:rw"
-          - "/etc/timezone:/etc/timezone:ro"
+        volumes: "{{ [prometheus_config_directory ~ '/prometheus.yml:/etc/prometheus/prometheus.yml:ro',
+                      prometheus_data_directory ~ ':/prometheus:rw',
+                      '/etc/timezone:/etc/timezone:ro']
+          + ([prometheus_rules_directory ~ ':/etc/prometheus/rules:ro'] if prometheus_alerting_enabled else []) }}"
         ports:
           - "{{ prometheus_port }}:9090"
         restart_policy: unless-stopped
