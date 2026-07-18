@@ -2290,7 +2290,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "speedtest_download_bits_per_second",
+          "expr": "last_over_time(speedtest_download_bits_per_second[65m])",
           "instant": false,
           "interval": "",
           "legendFormat": "Download",
@@ -2303,7 +2303,7 @@
             "uid": "ansible_homelab_orchestration"
           },
           "editorMode": "code",
-          "expr": "speedtest_upload_bits_per_second",
+          "expr": "last_over_time(speedtest_upload_bits_per_second[65m])",
           "hide": false,
           "legendFormat": "Upload",
           "range": true,
@@ -2397,7 +2397,7 @@
             "uid": "ansible_homelab_orchestration"
           },
           "editorMode": "code",
-          "expr": "speedtest_ping_latency_milliseconds",
+          "expr": "last_over_time(speedtest_ping_latency_milliseconds[65m])",
           "hide": false,
           "legendFormat": "Latency",
           "range": true,
