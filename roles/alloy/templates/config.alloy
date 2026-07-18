@@ -118,8 +118,14 @@ discovery.relabel "metrics" {
 
 prometheus.exporter.unix "metrics" {
   disable_collectors = ["ipvs", "btrfs", "infiniband", "xfs", "zfs"]
-  enable_collectors = ["meminfo"]
+  enable_collectors = ["meminfo"{% if alloy_textfile_directory is defined %}, "textfile"{% endif %}]
   rootfs_path = "/rootfs"
+{% if alloy_textfile_directory is defined %}
+  // Host directory (via the /rootfs bind mount) where cron jobs/scripts drop *.prom files.
+  textfile {
+    directory = "/rootfs{{ alloy_textfile_directory }}"
+  }
+{% endif %}
   filesystem {
     fs_types_exclude     = "^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|tmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$"
     mount_points_exclude = "^/(dev|proc|run/credentials/.+|sys|var/lib/docker/.+)($|/)"

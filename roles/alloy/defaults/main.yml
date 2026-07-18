@@ -24,3 +24,6 @@ alloy_memory: 1g
 
 # config
 alloy_loglevel: info
+# Uncomment to enable the node-exporter-style textfile collector, reading *.prom files
+# from this HOST directory (useful for exposing custom metrics from cron jobs/scripts).
+# alloy_textfile_directory: "{{ docker_home }}/textfile_metrics"
