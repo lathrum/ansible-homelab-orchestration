@@ -16,6 +16,9 @@
         - "{{ foundryvtt_data_directory }}"
 
     - name: Foundry VTT Docker Container
+      # Passes secret env (FOUNDRY_PASSWORD/FOUNDRY_ADMIN_KEY); no_log keeps them
+      # out of the target host journal on rebuild.
+      no_log: true
       community.docker.docker_container:
         name: "{{ foundryvtt_container_name }}"
         image: "{{ foundryvtt_image_name }}:{{ foundryvtt_image_version }}"
