@@ -37,18 +37,31 @@ discovery.docker "dockerlogs" {
 }
 
 discovery.relabel "dockerlogs" {
-  targets = []
+  targets = discovery.docker.dockerlogs.targets
 
   rule {
     source_labels = ["__meta_docker_container_name"]
     regex = "/(.*)"
     target_label = "service_name"
   }
+
+  /* loki.source.docker derives its positions.yml key from the RAW target
+   * label set (container id + full label string), NOT the post-relabel
+   * stream labels. Volatile per-network-instance meta labels (network id,
+   * container IP, published ports) therefore change the key every time the
+   * docker bridge network is recreated, causing a full re-tail from byte 0
+   * and Loki reject_old_samples data loss. Drop them from the TARGETS here so
+   * the position key stays stable. container_id (CursorKey/dedup) and
+   * container_name (service_name) are preserved. */
+  rule {
+    action = "labeldrop"
+    regex  = "__meta_docker_network_.*|__meta_docker_port_.*"
+  }
 }
 
 loki.source.docker "default" {
   host       = "unix:///var/run/docker.sock"
-  targets    = discovery.docker.dockerlogs.targets
+  targets    = discovery.relabel.dockerlogs.output
   labels     = {"platform" = "docker"}
   relabel_rules = discovery.relabel.dockerlogs.rules
   forward_to = [loki.write.default.receiver]
