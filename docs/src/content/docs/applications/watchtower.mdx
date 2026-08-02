@@ -56,9 +56,9 @@ watchtower_metrics_token: "your-generated-token"
 watchtower_ephemeral_self_update_enabled: true
 ```
 
-Prometheus scrapes `/v1/metrics` on `watchtower_metrics_port` (default `8081`)
-automatically. Import the dashboard from the Watchtower repo's
-`examples/metrics/grafana/dashboards/dashboard.json` to visualize the data.
+Prometheus scrapes `/v1/metrics` on `watchtower_metrics_port` (default `8081`) automatically.
+Then import the dashboard from the Watchtower repo's [`examples/metrics/grafana/dashboards/dashboard.json`](https://github.com/nicholas-fedor/watchtower/blob/main/examples/metrics/grafana/dashboards/dashboard.json)
+to visualize the data.
 
 <Aside type="caution">
 	Publishing the metrics port would normally make Watchtower skip updating its **own**
