@@ -44,10 +44,10 @@ pelican_panel_port: 8103
 
 # containers
 pelican_panel_container_name: pelican_panel
-pelican_panel_image_name: ghcr.io/pelican-dev/panel
+pelican_panel_image_name: ghcr.io/pelican/panel
 # Pinned and excluded from Watchtower (see tasks): the Panel and Wings share a compatibility
 # contract, so upgrade them together deliberately. Bump this and re-run the role to upgrade.
-pelican_panel_image_version: v1.0.0-beta36
+pelican_panel_image_version: v1.0.0-beta38
 
 pelican_panel_container_names: # Used to check if app is running
   - "{{ pelican_panel_container_name }}"
