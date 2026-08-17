@@ -38,10 +38,10 @@ pelican_wings_network_subnet: 172.31.0.0/16
 
 # containers
 pelican_wings_container_name: pelican_wings
-pelican_wings_image_name: ghcr.io/pelican-dev/wings
+pelican_wings_image_name: ghcr.io/pelican/wings
 # Pinned and excluded from Watchtower (see tasks). Wings and the Panel share a compatibility
 # contract, so upgrade them together deliberately. Bump this and re-run the role to upgrade.
-pelican_wings_image_version: v1.0.0-beta27
+pelican_wings_image_version: v1.0.0-beta29
 
 pelican_wings_container_names: # Used to check if app is running
   - "{{ pelican_wings_container_name }}"

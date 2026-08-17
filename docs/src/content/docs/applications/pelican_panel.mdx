@@ -7,7 +7,7 @@ import Tags from "../../../components/Tags.astro"
 import RecentChanges from "../../../components/RecentChanges.astro"
 
 [Homepage](https://pelican.dev/) |
-[Repository](https://github.com/pelican-dev/panel)
+[Repository](https://github.com/pelican/panel)
 
 <Tags tags={frontmatter.tags} />
 
@@ -22,7 +22,7 @@ pelican_panel_enabled: true
 
 By default, Pelican Panel can be accessed at `http://[your_server_ip]:8103` or `https://pelican.[your_domain].com` if you have [DNS access](../../guides/dns-access/) configured.
 
-This role runs the all-in-one `ghcr.io/pelican-dev/panel` image (php-fpm, a bundled Caddy, the queue worker and the scheduler under supervisord) against a **SQLite** database, so there is no separate database container to run.
+This role runs the all-in-one `ghcr.io/pelican/panel` image (php-fpm, a bundled Caddy, the queue worker and the scheduler under supervisord) against a **SQLite** database, so there is no separate database container to run.
 SQLite is the upstream default and is plenty for household-scale hosting.
 
 The Panel is only half the stack. You also need [Pelican Wings](../pelican_wings/) — the daemon that starts and stops the game-server containers — on whichever host should run the games.
