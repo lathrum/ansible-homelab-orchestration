@@ -28,6 +28,16 @@
         recursive: true
       register: ts3web_source
 
+    # Upstream's Dockerfile pins php:7.0-apache (end of life, unpatched RCEs). Build from our own
+    # copy on a supported PHP, with the production php.ini so PHP 8 deprecation notices from the
+    # 2020-era code are not printed into pages.
+    - name: Copy TS3Web Dockerfile
+      ansible.builtin.copy:
+        src: Dockerfile
+        dest: "{{ ts3web_build_directory }}/Dockerfile.ansible"
+        mode: "0644"
+      register: ts3web_dockerfile
+
     - name: Build TS3Web Image
       community.docker.docker_image:
         name: "{{ ts3web_image_name }}"
@@ -35,8 +45,9 @@
         source: build
         build:
           path: "{{ ts3web_build_directory }}"
+          dockerfile: Dockerfile.ansible
           pull: true
-        force_source: "{{ ts3web_source.changed }}"
+        force_source: "{{ ts3web_source.changed or ts3web_dockerfile.changed }}"
         state: present
 
     # Auto-refresh wrapper (tsviewpub.php has no refresh of its own). Bind-mounted into the
