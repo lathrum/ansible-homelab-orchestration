@@ -29,6 +29,8 @@ Upstream publishes no image and the repository was archived in 2020, so this rol
 
 `ts3web_image_version` doubles as the git ref to build from, so the running image stays reproducible and pinned. The clone is recursive because the PHP application lives in the `webinterface` submodule; without it the image builds with an empty web root.
 
+The build uses the role's own Dockerfile (`roles/ts3web/files/Dockerfile`), not the one in the cloned repository. Upstream's pins `php:7.0-apache`, which is end of life and has unpatched remote code execution bugs. The role's copy builds the same image on `php:8.4-apache` with the production `php.ini`, and patches one PHP 8 incompatibility that turned a failed ServerQuery connection into an HTTP 500. The base image is only re-pulled when the image is rebuilt, which happens when `ts3web_image_version` or the Dockerfile changes. To pick up a newer PHP patch release, remove the container and the built image (`docker rm -f ts3web && docker rmi ts3web:<version>`) and run the role again.
+
 ## Configuration
 
 See the default configuration options for TS3Web at [`roles/ts3web/defaults/main.yml`](https://github.com/Dylancyclone/ansible-homelab-orchestration/blob/main/roles/ts3web/defaults/main.yml).
